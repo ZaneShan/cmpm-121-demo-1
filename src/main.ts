@@ -2,6 +2,12 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
+//variables
+let cakePerSec: number = 1;
+let count: number = 0;
+let lastTime: number = 0;
+
+//title
 const gameName = "MoonCake Clicker";
 document.title = gameName;
 
@@ -9,23 +15,41 @@ const header = document.createElement("h1");
 header.innerHTML = gameName;
 app.append(header);
 
+
+//clicker
 const button = document.createElement("button");
 button.innerHTML = "🥮";
 app.append(button);
 
+//counterDIV
 const counter = document.createElement("div");
-let count: number = 0;
-counter.innerHTML = `${count} Mooncakes`;
+counter.innerHTML = `${count.toFixed(2)} 🥮`;
 counter.className = "counter";
 app.append(counter);
 
+//helper function to update counter display
+const updateCounter = () => {
+    counter.innerHTML = `${count.toFixed(2)} 🥮`;
+};
+
+  //click event
 button.addEventListener("click", () => {
     count++;  // Increment the counter
-    counter.innerHTML = `${count} Mooncakes`; // Update the message
-  });
+    updateCounter(); // Update the message
+});
 
-  // Automatically increment the counter by 1 every second using setInterval
-setInterval(() => {
-    count++;  // Increment the counter every second
-    counter.innerHTML = `${count} Mooncakes`;  // Update the counter display
-  }, 1000);  // 1000 ms = 1 second
+
+const animate = (currentTime: number) => {
+    if (lastTime === 0) lastTime = currentTime;
+  
+    const deltaTime = currentTime - lastTime; 
+    lastTime = currentTime;
+  
+    count += (cakePerSec * deltaTime) / 1000;
+  
+    updateCounter();
+  
+    requestAnimationFrame(animate); 
+};
+
+requestAnimationFrame(animate);
