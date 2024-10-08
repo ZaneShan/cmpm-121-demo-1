@@ -27,16 +27,39 @@ counter.innerHTML = `${count.toFixed(2)} 🥮`;
 counter.className = "counter";
 app.append(counter);
 
-//helper function to update counter display
-const updateCounter = () => {
-    counter.innerHTML = `${count.toFixed(2)} 🥮`;
-};
+//upgrade button
+const upgradeButton = document.createElement("button");
+upgradeButton.className = "upgrade styled";
+upgradeButton.type = "button";
+upgradeButton.innerHTML = "Purchase (10 🥮)";
+upgradeButton.disabled = true; // start as disabled
+app.append(upgradeButton);
+
+//upgrade event
+upgradeButton.addEventListener("click", () => {
+    if (count >= 10) {
+        count -= 10;  // Deduct 10 cookies
+        cakePerSec += 1;  // Increase the growth rate
+        updateCounter();  // Update the counter display
+    }
+});
 
   //click event
 button.addEventListener("click", () => {
     count++;  // Increment the counter
     updateCounter(); // Update the message
 });
+
+//helper function to update counter display
+const updateCounter = () => {
+    counter.innerHTML = `${count.toFixed(2)} 🥮`;
+
+    //enable upgrade
+    if (upgradeButton.disabled && count >= 10) {
+        upgradeButton.disabled = false;
+    }
+    else {upgradeButton.disabled = true}
+};
 
 
 const animate = (currentTime: number) => {
