@@ -2,12 +2,15 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-//variables
+// variables
 let cakePerSec: number = 0;
 let count: number = 0;
 let lastTime: number = 0;
+let upgradeACount: number = 0;
+let upgradeBCount: number = 0;
+let upgradeCCount: number = 0;
 
-//title
+// title
 const gameName = "MoonCake Clicker";
 document.title = gameName;
 
@@ -16,63 +19,108 @@ header.innerHTML = gameName;
 app.append(header);
 
 
-//clicker
+// clicker
 const button = document.createElement("button");
 button.innerHTML = "🥮";
 app.append(button);
 
-//counterDIV
+// container to hold div counters
+const container = document.createElement("div");
+container.className = "counter-container";
+app.appendChild(container);  // append container to the app
+// counter DIV
 const counter = document.createElement("div");
 counter.innerHTML = `${count.toFixed(0)} 🥮`;
 counter.className = "counter";
-app.append(counter);
+container.appendChild(counter);  // append to container
+// cake per second DIV
+const cakePerSecDiv = document.createElement("div");
+cakePerSecDiv.innerHTML = `${cakePerSec.toFixed(2)} 🥮 per second`;
+cakePerSecDiv.className = "counter";
+container.appendChild(cakePerSecDiv);  // append to container
 
-//upgrade button
-const upgradeButton = document.createElement("button");
-upgradeButton.className = "upgrade styled";
-upgradeButton.type = "button";
-upgradeButton.innerHTML = "Purchase (10 🥮)";
-upgradeButton.disabled = true; // start as disabled
-app.append(upgradeButton);
+// upgrade button
+const upgradeA = document.createElement("button");
+upgradeA.className = "upgrade styled";
+upgradeA.type = "button";
+upgradeA.innerHTML = "Purchase (10 🥮)";
+upgradeA.disabled = true; // start as disabled
+app.append(upgradeA);
 
-//upgrade event
-upgradeButton.addEventListener("click", () => {
+const upgradeB = document.createElement("button");
+upgradeB.className = "upgrade styled";
+upgradeB.type = "button";
+upgradeB.innerHTML = "Purchase (100 🥮)";
+upgradeB.disabled = true; // start as disabled
+app.append(upgradeB);
+
+const upgradeC = document.createElement("button");
+upgradeC.className = "upgrade styled";
+upgradeC.type = "button";
+upgradeC.innerHTML = "Purchase (1000 🥮)";
+upgradeC.disabled = true; // start as disabled
+app.append(upgradeC);
+
+// upgrade event
+upgradeA.addEventListener("click", () => {
     if (count >= 10) {
-        count -= 10;  // Deduct 10 cookies
-        cakePerSec += 1;  // Increase the growth rate
-        updateCounter();  // Update the counter display
+        count -= 10; 
+        cakePerSec += .1; 
+        upgradeACount += 1;
+        updateCounter(); 
+    }
+});
+upgradeB.addEventListener("click", () => {
+    if (count >= 100) {
+        count -= 100;  
+        cakePerSec += 2;  
+        upgradeBCount += 1;
+        updateCounter(); 
+    }
+});
+upgradeC.addEventListener("click", () => {
+    if (count >= 1000) {
+        count -= 1000;  
+        cakePerSec += 50; 
+        upgradeCCount += 1;
+        updateCounter();  
     }
 });
 
-  //click event
+  // click event
 button.addEventListener("click", () => {
-    count++;  // Increment the counter
-    updateCounter(); // Update the message
+    count++;
+    updateCounter();
 });
 
-//helper function to update counter display
+// helper function to update counter display
 const updateCounter = () => {
     counter.innerHTML = `${count.toFixed(0)} 🥮`;
+    cakePerSecDiv.innerHTML = `${cakePerSec.toFixed(1)} 🥮`;
+    upgradeA.innerHTML = `(${upgradeACount}) Purchase (10 🥮)`
+    upgradeB.innerHTML = `(${upgradeBCount}) Purchase (100 🥮)`
+    upgradeC.innerHTML = `(${upgradeCCount}) Purchase (1000 🥮)`
 
-    //enable upgrade
-    if (upgradeButton.disabled && count >= 10) {
-        upgradeButton.disabled = false;
-    }
-    else {upgradeButton.disabled = true}
+    // update upgrade availability
+    upgradeA.disabled = count < 10;
+    upgradeB.disabled = count < 100;
+    upgradeC.disabled = count < 1000;
 };
-
 
 const animate = (currentTime: number) => {
     if (lastTime === undefined) lastTime = currentTime;
-  
-    const deltaTime = currentTime - lastTime; 
-    lastTime = currentTime;
-  
-    count += (cakePerSec * deltaTime) / 1000;
-  
-    updateCounter();
+
+    const deltaTime = currentTime - lastTime;
+    if (deltaTime >= 1000) {
+        lastTime = currentTime;
+      
+        // update count
+        count += cakePerSec;
+        updateCounter();
+    }
   
     requestAnimationFrame(animate); 
 };
 
+// start animation
 requestAnimationFrame(animate);
