@@ -3,7 +3,7 @@ import "./style.css";
 const app: HTMLDivElement = document.querySelector("#app")!;
 
 //variables
-let cakePerSec: number = 1;
+let cakePerSec: number = 0;
 let count: number = 0;
 let lastTime: number = 0;
 
@@ -23,7 +23,7 @@ app.append(button);
 
 //counterDIV
 const counter = document.createElement("div");
-counter.innerHTML = `${count.toFixed(2)} 🥮`;
+counter.innerHTML = `${count.toFixed(0)} 🥮`;
 counter.className = "counter";
 app.append(counter);
 
@@ -52,7 +52,7 @@ button.addEventListener("click", () => {
 
 //helper function to update counter display
 const updateCounter = () => {
-    counter.innerHTML = `${count.toFixed(2)} 🥮`;
+    counter.innerHTML = `${count.toFixed(0)} 🥮`;
 
     //enable upgrade
     if (upgradeButton.disabled && count >= 10) {
@@ -63,7 +63,7 @@ const updateCounter = () => {
 
 
 const animate = (currentTime: number) => {
-    if (lastTime === 0) lastTime = currentTime;
+    if (lastTime === undefined) lastTime = currentTime;
   
     const deltaTime = currentTime - lastTime; 
     lastTime = currentTime;
