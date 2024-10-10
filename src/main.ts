@@ -9,6 +9,9 @@ let lastTime: number = 0;
 let upgradeACount: number = 0;
 let upgradeBCount: number = 0;
 let upgradeCCount: number = 0;
+let upgradeAprice: number = 10;
+let upgradeBprice: number = 100;
+let upgradeCprice: number = 1000;
 
 // title
 const gameName = "MoonCake Clicker";
@@ -61,28 +64,43 @@ upgradeC.innerHTML = "Purchase (1000 🥮)";
 upgradeC.disabled = true; // start as disabled
 app.append(upgradeC);
 
+const updatePrices = () => {
+    if (upgradeACount > 0) {
+        upgradeAprice = 10 * (1.15 ** upgradeACount);
+    }
+    if (upgradeBCount > 0) {
+        upgradeBprice = 100 * (1.15 ** upgradeBCount)
+    }
+    if (upgradeBCount > 0) {
+        upgradeCprice = 1000 * (1.15 ** upgradeCCount)
+    }
+}
+
 // upgrade event
 upgradeA.addEventListener("click", () => {
-    if (count >= 10) {
-        count -= 10; 
+    if (count >= upgradeAprice) {
+        count -= upgradeAprice; 
         cakePerSec += .1; 
         upgradeACount += 1;
+        updatePrices();
         updateCounter(); 
     }
 });
 upgradeB.addEventListener("click", () => {
-    if (count >= 100) {
-        count -= 100;  
+    if (count >= upgradeBprice) {
+        count -= upgradeBprice;  
         cakePerSec += 2;  
         upgradeBCount += 1;
+        updatePrices();
         updateCounter(); 
     }
 });
 upgradeC.addEventListener("click", () => {
-    if (count >= 1000) {
-        count -= 1000;  
+    if (count >= upgradeCprice) {
+        count -= upgradeCprice;  
         cakePerSec += 50; 
         upgradeCCount += 1;
+        updatePrices();
         updateCounter();  
     }
 });
@@ -95,16 +113,16 @@ button.addEventListener("click", () => {
 
 // helper function to update counter display
 const updateCounter = () => {
-    counter.innerHTML = `${count.toFixed(0)} 🥮`;
+    counter.innerHTML = `${count.toFixed(2)} 🥮`;
     cakePerSecDiv.innerHTML = `${cakePerSec.toFixed(1)} 🥮`;
-    upgradeA.innerHTML = `(${upgradeACount}) Purchase (10 🥮)`
-    upgradeB.innerHTML = `(${upgradeBCount}) Purchase (100 🥮)`
-    upgradeC.innerHTML = `(${upgradeCCount}) Purchase (1000 🥮)`
+    upgradeA.innerHTML = `(${upgradeACount}) Purchase (${upgradeAprice.toFixed(2)} 🥮)`
+    upgradeB.innerHTML = `(${upgradeBCount}) Purchase (${upgradeBprice.toFixed(2)} 🥮)`
+    upgradeC.innerHTML = `(${upgradeCCount}) Purchase (${upgradeCprice.toFixed(2)} 🥮)`
 
     // update upgrade availability
-    upgradeA.disabled = count < 10;
-    upgradeB.disabled = count < 100;
-    upgradeC.disabled = count < 1000;
+    upgradeA.disabled = count < upgradeAprice;
+    upgradeB.disabled = count < upgradeBprice;
+    upgradeC.disabled = count < upgradeCprice;
 };
 
 const animate = (currentTime: number) => {
