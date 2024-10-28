@@ -2,6 +2,12 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
+// magic numbers
+const BUTTON_HOVER_SCALE = 1.05;
+const BUTTON_PRESS_SCALE = 0.95;
+const BUTTON_DEFAULT_SCALE = 1.0;
+const UPGRADE_COST_MULTIPLIER = 1.15;
+
 // variables
 let skeletonsPerSec: number = 0;
 let count: number = 0;
@@ -69,10 +75,10 @@ button.style.justifyContent = "center";
 button.style.margin = "auto";  
 // add hover effect
 button.addEventListener("mouseover", () => {
-    button.style.transform = "scale(1.05)"; // slightly enlarge button on hover
+    button.style.transform = `scale(${BUTTON_HOVER_SCALE})`; // slightly enlarge button on hover
 });
 button.addEventListener("mouseout", () => {
-    button.style.transform = "scale(1)"; // return to normal size
+    button.style.transform = `scale(${BUTTON_DEFAULT_SCALE})`; // return to normal size
 });
 app.append(button);
 
@@ -81,7 +87,7 @@ button.addEventListener("click", () => {
     count += clickCount;
     updateCounter();
     // push effect
-    button.style.transform = "scale(0.95)";
+    button.style.transform = `scale(${BUTTON_PRESS_SCALE})`;
     setTimeout(() => {
         button.style.transform = "scale(1)"; // reset scale
     }, 100); // 100ms duration for the press effect
@@ -163,7 +169,7 @@ const createUpgradeButton = (item: Item, index: number) => {
 }
 
 const updatePrices = () => {
-    upgradePrices = availableItems.map((item, index) => item.cost * (1.15 ** upgradeCounts[index]));
+    upgradePrices = availableItems.map((item, index) => item.cost * (UPGRADE_COST_MULTIPLIER ** upgradeCounts[index]));
 };
 
 const updateCounter = () => {
