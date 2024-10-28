@@ -110,14 +110,7 @@ skeletonsPerSecDiv.innerHTML = `${skeletonsPerSec.toFixed(1)} 💀 per second`;
 skeletonsPerSecDiv.className = "counter";
 container.appendChild(skeletonsPerSecDiv);  // append to container
 
-availableItems.forEach((item, index) => {
-    const upgradeButton = document.createElement("button");
-    upgradeButton.className = "upgrade styled";
-    upgradeButton.type = "button";
-    upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} (${upgradePrices[index].toFixed(2)} 💀)`;
-    upgradeButton.disabled = true; // Start as disabled
-    app.append(upgradeButton);
-
+const createTooltip = (item: Item, button: HTMLButtonElement) => {
     // Tooltip element
     const tooltip = document.createElement("div");
     tooltip.className = "tooltip";
@@ -131,38 +124,43 @@ availableItems.forEach((item, index) => {
     tooltip.style.zIndex = "1000"; // ensure it's above other elements
     document.body.appendChild(tooltip);
     // tooltip positioning
-    upgradeButton.addEventListener("mousemove", (e) => {
-        tooltip.style.left = `${e.pageX + 10}px`; // offset to avoid mouse pointer
-        tooltip.style.top = `${e.pageY + 10}px`; // offset below mouse pointer
+    button.addEventListener("mousemove", (e) => {
+        tooltip.style.left = `${e.pageX + 10}px`;
+        tooltip.style.top = `${e.pageY + 10}px`;
     });
-    // show on mouseover
-    upgradeButton.addEventListener("mouseover", () => {
+    button.addEventListener("mouseover", () => {
         tooltip.style.visibility = "visible";
     });
-    // hide on mouseout
-    upgradeButton.addEventListener("mouseout", () => {
+    button.addEventListener("mouseout", () => {
         tooltip.style.visibility = "hidden";
     });
 
-    // Upgrade event
+    return tooltip;
+}
+
+const createUpgradeButton = (item: Item, index: number) => {
+    const upgradeButton = document.createElement("button");
+    upgradeButton.className = "upgrade styled";
+    upgradeButton.type = "button";
+    upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} (${upgradePrices[index].toFixed(2)} 💀)`;
+    upgradeButton.disabled = true; // start as disabled
+    app.append(upgradeButton);
+
+    createTooltip(item, upgradeButton);
+
     upgradeButton.addEventListener("click", () => {
         if (count >= upgradePrices[index]) {
             count -= upgradePrices[index]; 
             skeletonsPerSec += item.rate; 
             clickCount += item.clickRate;
             upgradeCounts[index] += 1;
-            updatePrices(); // Update prices for all items
-            updateCounter(); 
-            updateUpgradeButtons();
+            updatePrices(); // update prices for all items
+            updateUpgradeButtons(); // now update the actual html text to reflect these changes
         }
     });
 
-    // Update prices for the button when the count is updated
-    upgradeButton.addEventListener("click", () => {
-        updateUpgradeButtons();
-    });
-});
-
+    return upgradeButton;
+}
 
 const updatePrices = () => {
     upgradePrices = availableItems.map((item, index) => item.cost * (1.15 ** upgradeCounts[index]));
@@ -201,3 +199,8 @@ const animate = (currentTime: number) => {
 
 // start animation
 requestAnimationFrame(animate);
+
+// generate upgrade buttons
+availableItems.forEach((item, index) => {
+    createUpgradeButton(item, index);
+});
