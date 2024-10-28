@@ -29,15 +29,15 @@ const availableItems: Item[] = [
     { name: "Skeleton Necromancers", 
         description: "Extra hands for creating your unholy army.",
         flavortext: "NECROMANCERS UNION ASSERTS 'ABSOLUTE, AIRTIGHT' ANTI-NECRO-AUTOMATION STANCE",
-        cost: 100, rate: 100, clickRate: 0 },
+        cost: 100, rate: 50, clickRate: 0 },
     { name: "Ritual Portal", 
         description: "Herald other-dimensional undead to this world.",
         flavortext: "This ritual actually doesnt require this many bones; the other half is used for a delicious broth that keeps the creatures from the portal from eating us.",
-        cost: 1000, rate: 50, clickRate: 0 },
+        cost: 1000, rate: 100, clickRate: 0 },
     { name: "Plague of Rebirth", 
         description: "Sweep the atmosphere with a miasma that ends all life and brings it back.",
         flavortext: "Generally unethical not for its capacity for death but for its effect on global warming.",
-        cost: 3000, rate: 100, clickRate: 0 },
+        cost: 3000, rate: 1000, clickRate: 0 },
 ];
 // item variables
 const upgradeCounts: number[] = [0, 0, 0, 0, 0]; // upgrade counts for A, B, C
@@ -110,28 +110,6 @@ skeletonsPerSecDiv.innerHTML = `${skeletonsPerSec.toFixed(1)} 💀 per second`;
 skeletonsPerSecDiv.className = "counter";
 container.appendChild(skeletonsPerSecDiv);  // append to container
 
-// upgrade button
-    // A
-// const upgradeA = document.createElement("button");
-// upgradeA.className = "upgrade styled";
-// upgradeA.type = "button";
-// upgradeA.innerHTML = `(${upgradeACount}) Grave Digger Shovels (${upgradeAprice.toFixed(2)} 💀)`
-// upgradeA.disabled = true; // start as disabled
-// app.append(upgradeA);
-//     // B
-// const upgradeB = document.createElement("button");
-// upgradeB.className = "upgrade styled";
-// upgradeB.type = "button";
-// upgradeB.innerHTML = `(${upgradeBCount}) Necromancy Tomes (${upgradeBprice.toFixed(2)} 💀)`
-// upgradeB.disabled = true;
-// app.append(upgradeB);
-//     // C
-// const upgradeC = document.createElement("button");
-// upgradeC.className = "upgrade styled";
-// upgradeC.type = "button";
-// upgradeC.innerHTML = `(${upgradeCCount}) Graveyard Scavengers (${upgradeCprice.toFixed(2)} 💀)`
-// upgradeC.disabled = true;
-// app.append(upgradeC);
 availableItems.forEach((item, index) => {
     const upgradeButton = document.createElement("button");
     upgradeButton.className = "upgrade styled";
@@ -143,7 +121,7 @@ availableItems.forEach((item, index) => {
     // Tooltip element
     const tooltip = document.createElement("div");
     tooltip.className = "tooltip";
-    tooltip.innerHTML = `each ${item.name} prduces ${item.rate}💀 per second and ${item.clickRate}💀 per click <br> ${item.description} <br> <span style="font-size: 10px; font-style: italic;">${item.flavortext}</span>`;
+    tooltip.innerHTML = `each ${item.name} produces ${item.rate}💀 per second and ${item.clickRate}💀 per click <br> ${item.description} <br> <span style="font-size: 10px; font-style: italic;">${item.flavortext}</span>`;
     tooltip.style.position = "absolute";
     tooltip.style.backgroundColor = "#444";
     tooltip.style.color = "#fff";
@@ -175,84 +153,35 @@ availableItems.forEach((item, index) => {
             upgradeCounts[index] += 1;
             updatePrices(); // Update prices for all items
             updateCounter(); 
+            updateUpgradeButtons();
         }
     });
 
     // Update prices for the button when the count is updated
     upgradeButton.addEventListener("click", () => {
-        updateCounter();
+        updateUpgradeButtons();
     });
 });
 
-// update prices helper
-// const updatePrices = () => {
-//     if (upgradeACount > 0) {
-//         upgradeAprice = 10 * (1.15 ** upgradeACount);
-//     }
-//     if (upgradeBCount > 0) {
-//         upgradeBprice = 100 * (1.15 ** upgradeBCount)
-//     }
-//     if (upgradeBCount > 0) {
-//         upgradeCprice = 1000 * (1.15 ** upgradeCCount)
-//     }
-// }
+
 const updatePrices = () => {
     upgradePrices = availableItems.map((item, index) => item.cost * (1.15 ** upgradeCounts[index]));
 };
 
-// upgrade event
-// upgradeA.addEventListener("click", () => {
-//     if (count >= upgradeAprice) {
-//         count -= upgradeAprice; 
-//         skeletonsPerSec += .1; 
-//         upgradeACount += 1;
-//         updatePrices();
-//         updateCounter(); 
-//     }
-// });
-// upgradeB.addEventListener("click", () => {
-//     if (count >= upgradeBprice) {
-//         count -= upgradeBprice;  
-//         skeletonsPerSec += 2;  
-//         upgradeBCount += 1;
-//         updatePrices();
-//         updateCounter(); 
-//     }
-// });
-// upgradeC.addEventListener("click", () => {
-//     if (count >= upgradeCprice) {
-//         count -= upgradeCprice;  
-//         skeletonsPerSec += 50; 
-//         upgradeCCount += 1;
-//         updatePrices();
-//         updateCounter();  
-//     }
-// });
-
-// helper function to update counter display
-// const updateCounter = () => {
-//     counter.innerHTML = `${count.toFixed(2)} 💀`;
-//     skeletonsPerSecDiv.innerHTML = `${skeletonsPerSec.toFixed(1)} 💀 per second`;
-//     upgradeA.innerHTML = `(${upgradeACount}) Grave Digger Shovels (${upgradeAprice.toFixed(2)} 💀)`
-//     upgradeB.innerHTML = `(${upgradeBCount}) Necromancy Tomes (${upgradeBprice.toFixed(2)} 💀)`
-//     upgradeC.innerHTML = `(${upgradeCCount}) Graveyard Scavengers (${upgradeCprice.toFixed(2)} 💀)`
-
-//     // update upgrade availability
-//     upgradeA.disabled = count < upgradeAprice;
-//     upgradeB.disabled = count < upgradeBprice;
-//     upgradeC.disabled = count < upgradeCprice;
-// };
 const updateCounter = () => {
     // update counter and skelPerSec
     counter.innerHTML = `${count.toFixed(2)} 💀`;
     skeletonsPerSecDiv.innerHTML = `${skeletonsPerSec.toFixed(1)} 💀 per second`;
-    
+
+};
+
+const updateUpgradeButtons = () => {
     availableItems.forEach((item, index) => {
         const upgradeButton = app.getElementsByClassName("upgrade styled")[index] as HTMLButtonElement; // reinitialize upgrade buttons
         upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} (${upgradePrices[index].toFixed(2)} 💀)`; // update text
         upgradeButton.disabled = count < upgradePrices[index]; // update button state based on count
     });
-};
+}
 
 const animate = (currentTime: number) => {
     if (lastTime === undefined) lastTime = currentTime;
@@ -264,6 +193,7 @@ const animate = (currentTime: number) => {
         // update count
         count += skeletonsPerSec;
         updateCounter();
+        updateUpgradeButtons();
     }
   
     requestAnimationFrame(animate); 
