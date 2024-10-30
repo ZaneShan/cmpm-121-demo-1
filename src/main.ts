@@ -28,11 +28,11 @@ const availableItems: Item[] = [
         description: "Channel your ability to More efficiently reanimate the dead. Clicks gives more skeletons.",
         flavortext: "Skin-bound tomes with dog-eared pages and conceptual metal band logos scribbled by previous owners sit next to a pile of chinese take-out.",
         cost: 10, rate: 0, clickRate: 0.1 },
-    { name: "Gravepickers", 
+    { name: "Gravepicker", 
         description: "Summon little helpers to scavenge bones from graveyards long-forgotten.",
         flavortext: `"Tinybones, please don't tell me you've lost your calcaneus again."`, 
         cost: 50, rate: 1, clickRate: 0 },
-    { name: "Skeleton Necromancers", 
+    { name: "Skeleton Necromancer", 
         description: "Extra hands for creating your unholy army.",
         flavortext: "NECROMANCERS UNION ASSERTS 'ABSOLUTE, AIRTIGHT' ANTI-NECRO-AUTOMATION STANCE",
         cost: 100, rate: 50, clickRate: 0 },
@@ -42,7 +42,7 @@ const availableItems: Item[] = [
         cost: 1000, rate: 100, clickRate: 0 },
     { name: "Plague of Rebirth", 
         description: "Sweep the atmosphere with a miasma that ends all life and brings it back.",
-        flavortext: "Generally unethical not for its capacity for death but for its effect on global warming.",
+        flavortext: "Generally unethical, not for its capacity for death but for its effect on global warming.",
         cost: 3000, rate: 1000, clickRate: 0 },
 ];
 // item variables
@@ -116,11 +116,26 @@ skeletonsPerSecDiv.innerHTML = `${skeletonsPerSec.toFixed(1)} 💀 per second`;
 skeletonsPerSecDiv.className = "counter";
 container.appendChild(skeletonsPerSecDiv);  // append to container
 
+// sidebar for upgrades
+const sidebar = document.createElement("div");
+sidebar.className = "sidebar";
+sidebar.style.width = "300px";
+sidebar.style.position = "absolute";
+sidebar.style.top = "0";
+sidebar.style.left = "0";
+sidebar.style.height = "100%";
+sidebar.style.padding = "10px";
+sidebar.style.backgroundColor = "#333";
+sidebar.style.color = "#fff";
+app.appendChild(sidebar);
+
 const createTooltip = (item: Item, button: HTMLButtonElement) => {
     // Tooltip element
     const tooltip = document.createElement("div");
     tooltip.className = "tooltip";
-    tooltip.innerHTML = `each ${item.name} produces ${item.rate}💀 per second and ${item.clickRate}💀 per click <br> ${item.description} <br> <span style="font-size: 10px; font-style: italic;">${item.flavortext}</span>`;
+    tooltip.innerHTML = `each ${item.name} produces: <br>
+     ${item.rate}💀 per second <br> 
+     ${item.clickRate}💀 per click <br> <span style="font-size: 10px; font-style: italic;">${item.flavortext}</span>`;
     tooltip.style.position = "absolute";
     tooltip.style.backgroundColor = "#444";
     tooltip.style.color = "#fff";
@@ -144,13 +159,41 @@ const createTooltip = (item: Item, button: HTMLButtonElement) => {
     return tooltip;
 }
 
+const upgradeButtonStyle = {
+    width: "220px", // set consistent width
+    height: "60px", // set consistent height
+    fontSize: "16px",
+    padding: "8px 0",
+    marginBottom: "10px",
+    backgroundColor: "#444",
+    color: "#fff",
+    border: "none",
+    cursor: "pointer",
+    borderRadius: "5px",
+    textAlign: "center",
+  };
+const disabledUpgradeButtonStyle = {
+    backgroundColor: "#888",        // Darker color for disabled state
+    color: "#ccc",                  // Lighter text color for disabled state
+    cursor: "not-allowed",          // Change cursor to not-allowed
+    width: "220px", // set consistent width
+    height: "60px", // set consistent height
+    fontSize: "16px",
+    padding: "8px 0",
+    marginBottom: "10px",
+    border: "none",
+    borderRadius: "5px",
+    textAlign: "center",
+};
+
 const createUpgradeButton = (item: Item, index: number) => {
     const upgradeButton = document.createElement("button");
+    Object.assign(upgradeButton.style, disabledUpgradeButtonStyle);
     upgradeButton.className = "upgrade styled";
     upgradeButton.type = "button";
-    upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} (${upgradePrices[index].toFixed(2)} 💀)`;
+    upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} <br> (${upgradePrices[index].toFixed(2)} 💀)`;
     upgradeButton.disabled = true; // start as disabled
-    app.append(upgradeButton);
+    sidebar.appendChild(upgradeButton);
 
     createTooltip(item, upgradeButton);
 
@@ -182,8 +225,13 @@ const updateCounter = () => {
 const updateUpgradeButtons = () => {
     availableItems.forEach((item, index) => {
         const upgradeButton = app.getElementsByClassName("upgrade styled")[index] as HTMLButtonElement; // reinitialize upgrade buttons
-        upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} (${upgradePrices[index].toFixed(2)} 💀)`; // update text
-        upgradeButton.disabled = count < upgradePrices[index]; // update button state based on count
+        upgradeButton.innerHTML = `(${upgradeCounts[index]}) ${item.name} <br> (${upgradePrices[index].toFixed(2)} 💀)`; // update text
+        // update button state based on count
+        if (count > upgradePrices[index]) {
+            upgradeButton.disabled = false;
+            Object.assign(upgradeButton.style, upgradeButtonStyle);
+        }
+        else {upgradeButton.disabled = count < upgradePrices[index];}
     });
 }
 
